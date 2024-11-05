@@ -2,7 +2,19 @@ import { firestore } from "@/app/lib/firebase";
 import { doc, increment, updateDoc } from "firebase/firestore";
 import { NextResponse } from "next/server";
 
-export async function POST(req) {
+export async function POST(req, res) {
+    // Set CORS headers to allow all origins
+  res.setHeader('Access-Control-Allow-Credentials', true);
+  res.setHeader('Access-Control-Allow-Origin', '*'); // Allow all origins
+  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
+  res.setHeader('Access-Control-Allow-Headers', 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version');
+
+  // Handle preflight requests
+  if (req.method === 'OPTIONS') {
+    res.status(200).end();
+    return;
+  }
+  
   const { id, deviceName } = await req.json();
 
   if (!id || !deviceName) {
