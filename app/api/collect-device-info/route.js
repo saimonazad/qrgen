@@ -3,16 +3,20 @@ import { doc, increment, updateDoc } from "firebase/firestore";
 import { NextResponse } from "next/server";
 import NextCors from 'nextjs-cors';
 
-export async function POST(req, res) {
+export async function POST(req) {
     // Set CORS headers to allow all origins
   // Run the cors middleware
   // nextjs-cors uses the cors package, so we invite you to check the documentation https://github.com/expressjs/cors
-  await NextCors(req, res, {
-    // Options
-    methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
-    origin: '*',
-    optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
-  });
+  const headers = new Headers();
+  headers.set('Access-Control-Allow-Origin', '*');
+  headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+
+  // Handle the request logic here
+  const response = NextResponse.json({ message: 'Hello, world!' });
+  response.headers.append('Access-Control-Allow-Origin', '*');
+  response.headers.append('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  response.headers.append('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   
   const { id, deviceName } = await req.json();
 
@@ -44,4 +48,13 @@ export async function POST(req, res) {
       { status: 500 }
     );
   }
+}
+
+export async function OPTIONS() {
+  const headers = new Headers();
+  headers.set('Access-Control-Allow-Origin', '*');
+  headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+
+  return new NextResponse(null, { headers });
 }
